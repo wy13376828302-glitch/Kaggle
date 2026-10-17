@@ -4,7 +4,14 @@
 
 My solution notebooks for [Kaggle Playground Series S6E9](https://www.kaggle.com/competitions/playground-series-s6e9). The task is binary classification: predict whether a person will buy an electric vehicle (`Will_Buy_EV`). Submissions are scored by **ROC AUC**.
 
-The project went from a single CatBoost baseline (Public LB **0.94149**) to a multi-model rank ensemble (Public LB **0.94619**), across 17 iterations.
+Over 17 iterations, the project went from a single CatBoost baseline (Private LB 0.94091) to a multi-model ensemble (Private LB **0.94526**).
+
+| Final result | |
+|---|---|
+| Private LB | **0.94526** |
+| Rank | **1025 / 3576** (top 29%) |
+| Best Public LB | 0.94622 |
+| Winning Private score | 0.94602 |
 
 ## Data
 
@@ -19,27 +26,27 @@ The data is not included in this repository (Kaggle's competition rules do not a
 
 ## Results
 
-OOF = out-of-fold ROC AUC on the training set. Public LB = the score Kaggle reported on submission. A dash means that score was not recorded.
+OOF = out-of-fold ROC AUC on the training set. Public and Private LB are the scores Kaggle gave each submission; the Private LB uses about 80% of the test data and decides the final ranking. A dash under OOF means the score was not recorded; under the LB columns it means that notebook's output was not submitted. ✓ marks the two submissions selected for final scoring.
 
-| # | Notebook | Main change | OOF AUC | Public LB |
-|---|---|---|---:|---:|
-| 01 | `01_0.94149` | CatBoost 5-fold baseline | 0.94170 | 0.94149 |
-| 02 | `02_0.94555` | Digit decomposition + numeric values as categories | — | 0.94555 |
-| 03 | `03_0.94570`, `031_0.94570` | 5-fold CatBoost with the validated features | 0.94562 | 0.94570 |
-| 04 | `04_reuse_catboost_lightgbm` | Add LightGBM with nested target encoding, 50/50 blend | 0.94599 | 0.94618 |
-| 05 | `05_continue_04_lightgbm_blend` | 25/75 blend; LightGBM depth 6 | 0.94602 | 0.94615 |
-| 06 | `06_lightgbm_smoothing10` | Target-encoding smoothing 1 → 10 | 0.94599 | 0.94609 |
-| 07 | `07_xgboost_three_model_blend` | Add XGBoost, three-model blend | 0.94604 | — |
-| 08 | `08_conditional_residual_features` | Conditional statistics + residual features | 0.94600 | — |
-| 09 | `09_heuljax_xgb10_rankblend` | 10-fold XGBoost + rank blend | 0.94610 | — |
-| 10 | `10_heuljax_logreg_ensemble` | 10-fold logistic regression for model diversity | 0.94264 ¹ | — |
-| 11 | `11_probit_nested_stack_rules` | Probit normalization + nested hill climb + OOF stacking | 0.94614 | **0.94619** |
-| 12 | `12_strong_xgb_feature_views` | Two stronger XGBoost feature views | 0.94618 | — |
-| 13 | `13_realmlp_10fold_v8_nested_hill` | RealMLP (pytabkit) 10-fold | — | — |
-| 14 | `14_1_realmlp_pytorch_kaggle_gpu` | RealMLP-style PyTorch for Kaggle GPU | — | — |
-| 15 | `15` | RealMLP-style PyTorch on Apple MPS | 0.93902 | — |
-| 16 | `16` | XGBoost with window target encoding | 0.94552 | — |
-| 17 | `17_final_ensemble` | **Final ensemble** of saved predictions | 0.94617 | — |
+| # | Notebook | Main change | OOF AUC | Public LB | Private LB |
+|---|---|---|---:|---:|---:|
+| 01 | `01_0.94149` | CatBoost 5-fold baseline | 0.94170 | 0.94149 | 0.94091 |
+| 02 | `02_0.94555` | Digit decomposition + numeric values as categories | — | 0.94555 | 0.94470 |
+| 03 | `03_0.94570`, `031_0.94570` | 5-fold CatBoost with the validated features | 0.94562 | 0.94570 | 0.94486 |
+| 04 | `04_reuse_catboost_lightgbm` | Add LightGBM with nested target encoding, 50/50 blend | 0.94599 | 0.94618 | 0.94525 ✓ |
+| 05 | `05_continue_04_lightgbm_blend` | 25/75 blend; LightGBM depth 6 | 0.94602 | 0.94615 | **0.94526** |
+| 06 | `06_lightgbm_smoothing10` | Target-encoding smoothing 1 → 10 | 0.94599 | 0.94609 | 0.94518 |
+| 07 | `07_xgboost_three_model_blend` | Add XGBoost, three-model blend | 0.94604 | 0.94612 | 0.94524 |
+| 08 | `08_conditional_residual_features` | Conditional statistics + residual features | 0.94600 | — | — |
+| 09 | `09_heuljax_xgb10_rankblend` | 10-fold XGBoost + rank blend | 0.94610 | — | — |
+| 10 | `10_heuljax_logreg_ensemble` | 10-fold logistic regression for model diversity | 0.94264 ¹ | — | — |
+| 11 | `11_probit_nested_stack_rules` | Probit normalization + nested hill climb + OOF stacking | 0.94614 | 0.94619 | 0.94525 |
+| 12 | `12_strong_xgb_feature_views` | Two stronger XGBoost feature views | 0.94618 | — | — |
+| 13 | `13_realmlp_10fold_v8_nested_hill` | RealMLP (pytabkit) 10-fold | — | — | — |
+| 14 | `14_1_realmlp_pytorch_kaggle_gpu` | RealMLP-style PyTorch for Kaggle GPU | — | — | — |
+| 15 | `15` | RealMLP-style PyTorch on Apple MPS | 0.93902 | — | — |
+| 16 | `16` | XGBoost with window target encoding | 0.94552 | — | — |
+| 17 | `17_final_ensemble` | **Final ensemble**: nested hill climb over saved predictions, plus hard rules | 0.94618 | **0.94622** | **0.94526** ✓ |
 
 ¹ Logistic regression alone. Every blend that included it scored lower than the blend from 09.
 
@@ -59,6 +66,7 @@ OOF = out-of-fold ROC AUC on the training set. Public LB = the score Kaggle repo
 - Convert each model's predictions to ranks, then to probit scores.
 - Drop near-duplicate models by Spearman correlation.
 - Choose blend weights with a nested Caruana hill climb, checked fold by fold.
+- The final submission also applies four hard rules about the data generator, taken from a public notebook.
 
 ```mermaid
 flowchart LR
@@ -77,11 +85,12 @@ Final blend weights in notebook 17: LightGBM 1/3; old XGBoost, `strong_rich_te`,
 1. **Feature representation gave the biggest gain.** Digit decomposition plus categorical copies of the numeric features moved the Public LB from 0.94149 to 0.94555 (+0.0041). All later work combined added about +0.0006.
 2. **A second model family helped once.** Adding LightGBM with nested target encoding to CatBoost took the Public LB from 0.94570 to 0.94618. After that, gains were tiny.
 3. **The tree models were too similar to blend well.** Spearman correlation between XGBoost and the CatBoost/LightGBM blend was 0.996, so adding more tree models raised OOF by about 0.0001 at most.
-4. **Small OOF gains did not carry over to the leaderboard.** The 25/75 blend in 05 improved OOF on all 5 folds (0.94599 → 0.94602), yet its Public LB went down (0.94618 → 0.94615). The same OOF was used for early stopping and for choosing candidates, so it is optimistic. Differences under about 0.0001 behaved like noise.
+4. **Small OOF gains did not carry over reliably.** The 25/75 blend in 05 improved OOF on all 5 folds (0.94599 → 0.94602). Its Public LB went down (0.94618 → 0.94615) while its Private LB went up (0.94525 → 0.94526). The same OOF was used for early stopping and for choosing candidates, so it is optimistic. Differences under about 0.0001 behaved like noise, in either direction.
 5. **A different model family only helps if it is also strong.** Logistic regression (0.94264) and a RealMLP-style network (0.93902) were too weak. Every blend that included logistic regression scored 0.0004–0.0009 lower than the blend from 09.
-6. **Meta-ensembling gave a small, real gain.** Probit-normalized ranks with a nested hill climb raised OOF from 0.94610 to 0.94618 and produced the best Public LB (0.94619).
+6. **Meta-ensembling helped on OOF and Public, but not on Private.** Probit-normalized ranks with a nested hill climb raised OOF from 0.94610 to 0.94618 and gave the two best Public LB scores (0.94619 in 11, 0.94622 in 17). On the Private LB, the final ensemble tied the simple 25/75 blend from 05 at 0.94526.
 7. **The ceiling was base-model strength, not ensembling.** My best single XGBoost reached 0.94600 OOF, while public write-ups for this competition reported 10-fold XGBoost at 0.9462–0.9465 CV. Closing that gap would have mattered more than further blending.
 8. **Fixed folds and saved predictions saved a lot of time.** Every model used the same 5-fold split (`StratifiedKFold`, seed 42) and saved its OOF and test predictions. Later notebooks loaded these instead of retraining, and checked that IDs and folds matched before blending.
+9. **Most of the final score was settled by notebook 04.** Notebooks 01–04 took the Private LB from 0.94091 to 0.94525. The 13 notebooks after that moved it by 0.00001. The winning score (0.94602) was 0.00076 higher, a gap that blend tuning could not close.
 
 ## Repository layout
 
