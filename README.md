@@ -30,23 +30,23 @@ OOF = out-of-fold ROC AUC on the training set. Public and Private LB are the sco
 
 | # | Notebook | Main change | OOF AUC | Public LB | Private LB |
 |---|---|---|---:|---:|---:|
-| 01 | `01_0.94149` | CatBoost 5-fold baseline | 0.94170 | 0.94149 | 0.94091 |
-| 02 | `02_0.94555` | Digit decomposition + numeric values as categories | — | 0.94555 | 0.94470 |
-| 03 | `03_0.94570`, `031_0.94570` | 5-fold CatBoost with the validated features | 0.94562 | 0.94570 | 0.94486 |
-| 04 | `04_reuse_catboost_lightgbm` | Add LightGBM with nested target encoding, 50/50 blend | 0.94599 | 0.94618 | 0.94525 ✓ |
-| 05 | `05_continue_04_lightgbm_blend` | 25/75 blend; LightGBM depth 6 | 0.94602 | 0.94615 | **0.94526** |
-| 06 | `06_lightgbm_smoothing10` | Target-encoding smoothing 1 → 10 | 0.94599 | 0.94609 | 0.94518 |
-| 07 | `07_xgboost_three_model_blend` | Add XGBoost, three-model blend | 0.94604 | 0.94612 | 0.94524 |
-| 08 | `08_conditional_residual_features` | Conditional statistics + residual features | 0.94600 | — | — |
-| 09 | `09_heuljax_xgb10_rankblend` | 10-fold XGBoost + rank blend | 0.94610 | — | — |
-| 10 | `10_heuljax_logreg_ensemble` | 10-fold logistic regression for model diversity | 0.94264 ¹ | — | — |
-| 11 | `11_probit_nested_stack_rules` | Probit normalization + nested hill climb + OOF stacking | 0.94614 | 0.94619 | 0.94525 |
-| 12 | `12_strong_xgb_feature_views` | Two stronger XGBoost feature views | 0.94618 | — | — |
-| 13 | `13_realmlp_10fold_v8_nested_hill` | RealMLP (pytabkit) 10-fold | — | — | — |
-| 14 | `14_1_realmlp_pytorch_kaggle_gpu` | RealMLP-style PyTorch for Kaggle GPU | — | — | — |
-| 15 | `15` | RealMLP-style PyTorch on Apple MPS | 0.93902 | — | — |
-| 16 | `16` | XGBoost with window target encoding | 0.94552 | — | — |
-| 17 | `17_final_ensemble` | **Final ensemble**: nested hill climb over saved predictions, plus hard rules | 0.94618 | **0.94622** | **0.94526** ✓ |
+| 01 | [`01_catboost_baseline`](notebooks/01_catboost_baseline.ipynb) | CatBoost 5-fold baseline | 0.94170 | 0.94149 | 0.94091 |
+| 02 | [`02_digit_numeric_categories`](notebooks/02_digit_numeric_categories.ipynb) | Digit decomposition + numeric values as categories | — | 0.94555 | 0.94470 |
+| 03 | [`03_catboost_5fold`](notebooks/03_catboost_5fold.ipynb) | 5-fold CatBoost with the validated features | 0.94562 | 0.94570 | 0.94486 |
+| 04 | [`04_add_lightgbm_blend`](notebooks/04_add_lightgbm_blend.ipynb) | Add LightGBM with nested target encoding, 50/50 blend | 0.94599 | 0.94618 | 0.94525 ✓ |
+| 05 | [`05_blend_weights_lgb_depth6`](notebooks/05_blend_weights_lgb_depth6.ipynb) | 25/75 blend; LightGBM depth 6 | 0.94602 | 0.94615 | **0.94526** |
+| 06 | [`06_lightgbm_te_smoothing10`](notebooks/06_lightgbm_te_smoothing10.ipynb) | Target-encoding smoothing 1 → 10 | 0.94599 | 0.94609 | 0.94518 |
+| 07 | [`07_xgboost_three_model_blend`](notebooks/07_xgboost_three_model_blend.ipynb) | Add XGBoost, three-model blend | 0.94604 | 0.94612 | 0.94524 |
+| 08 | [`08_conditional_residual_features`](notebooks/08_conditional_residual_features.ipynb) | Conditional statistics + residual features | 0.94600 | — | — |
+| 09 | [`09_xgboost_10fold_rank_blend`](notebooks/09_xgboost_10fold_rank_blend.ipynb) | 10-fold XGBoost + rank blend | 0.94610 | — | — |
+| 10 | [`10_logreg_ensemble`](notebooks/10_logreg_ensemble.ipynb) | 10-fold logistic regression for model diversity | 0.94264 ¹ | — | — |
+| 11 | [`11_probit_nested_hill_stack`](notebooks/11_probit_nested_hill_stack.ipynb) | Probit normalization + nested hill climb + OOF stacking | 0.94614 | 0.94619 | 0.94525 |
+| 12 | [`12_strong_xgb_feature_views`](notebooks/12_strong_xgb_feature_views.ipynb) | Two stronger XGBoost feature views | 0.94618 | — | — |
+| 13 | [`13_realmlp_pytabkit`](notebooks/13_realmlp_pytabkit.ipynb) | RealMLP (pytabkit) 10-fold | — | — | — |
+| 14 | [`14_realmlp_pytorch_kaggle_gpu`](notebooks/14_realmlp_pytorch_kaggle_gpu.ipynb) | RealMLP-style PyTorch for Kaggle GPU | — | — | — |
+| 15 | [`15_realmlp_pytorch_mps`](notebooks/15_realmlp_pytorch_mps.ipynb) | RealMLP-style PyTorch on Apple MPS | 0.93902 | — | — |
+| 16 | [`16_xgboost_window_te`](notebooks/16_xgboost_window_te.ipynb) | XGBoost with window target encoding | 0.94552 | — | — |
+| 17 | [`17_final_ensemble`](notebooks/17_final_ensemble.ipynb) | **Final ensemble**: nested hill climb over saved predictions, plus hard rules | 0.94618 | **0.94622** | **0.94526** ✓ |
 
 ¹ Logistic regression alone. Every blend that included it scored lower than the blend from 09.
 
@@ -96,9 +96,10 @@ Final blend weights in notebook 17: LightGBM 1/3; old XGBoost, `strong_rich_te`,
 
 ```
 .
-├── 01_…ipynb … 17_final_ensemble.ipynb   # experiments, run in numeric order
-├── data/          # not included: train.csv, test.csv
-└── outputs/       # not included: models, OOF and test predictions (~5.6 GB)
+├── notebooks/         # 01_catboost_baseline … 17_final_ensemble, run in numeric order
+├── requirements.txt
+├── data/              # not included: train.csv, test.csv
+└── outputs/           # not included: created by the notebooks (models, OOF and test predictions)
 ```
 
 ## Reproducing
@@ -112,7 +113,7 @@ Final blend weights in notebook 17: LightGBM 1/3; old XGBoost, `strong_rich_te`,
    ```bash
    pip install -r requirements.txt
    ```
-3. Each notebook sets `PROJECT = Path("/Users/yw/unsw/Kaggle")`. Change it to your local path.
+3. Start Jupyter and open the notebooks from `notebooks/`. Each notebook sets `PROJECT = Path.cwd().parent`, so `data/` and `outputs/` are found one level up; no path needs editing. Notebook 14 is the exception: it is meant to run on Kaggle with a GPU and reads from `/kaggle/input`.
 4. Run the notebooks in numeric order. From 04 onward, each notebook loads saved predictions from earlier runs in `outputs/` instead of retraining, so the earlier notebooks have to be run first.
 
 The notebook comments and explanations are written in Chinese.

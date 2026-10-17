@@ -30,23 +30,23 @@ OOF 是训练集上的 out-of-fold ROC AUC。Public LB 和 Private LB 是每次�
 
 | # | Notebook | 主要改动 | OOF AUC | Public LB | Private LB |
 |---|---|---|---:|---:|---:|
-| 01 | `01_0.94149` | CatBoost 五折 baseline | 0.94170 | 0.94149 | 0.94091 |
-| 02 | `02_0.94555` | 数字拆分 + 数值特征的类别副本 | — | 0.94555 | 0.94470 |
-| 03 | `03_0.94570`、`031_0.94570` | 用验证过的特征跑 CatBoost 五折 | 0.94562 | 0.94570 | 0.94486 |
-| 04 | `04_reuse_catboost_lightgbm` | 加入 LightGBM（嵌套目标编码），50/50 融合 | 0.94599 | 0.94618 | 0.94525 ✓ |
-| 05 | `05_continue_04_lightgbm_blend` | 25/75 融合；LightGBM 深度改为 6 | 0.94602 | 0.94615 | **0.94526** |
-| 06 | `06_lightgbm_smoothing10` | 目标编码平滑 1 → 10 | 0.94599 | 0.94609 | 0.94518 |
-| 07 | `07_xgboost_three_model_blend` | 加入 XGBoost，三模型融合 | 0.94604 | 0.94612 | 0.94524 |
-| 08 | `08_conditional_residual_features` | 条件统计 + 残差特征 | 0.94600 | — | — |
-| 09 | `09_heuljax_xgb10_rankblend` | 十折 XGBoost + rank 融合 | 0.94610 | — | — |
-| 10 | `10_heuljax_logreg_ensemble` | 十折逻辑回归，增加模型多样性 | 0.94264 ¹ | — | — |
-| 11 | `11_probit_nested_stack_rules` | Probit 归一化 + 嵌套 hill climb + OOF stacking | 0.94614 | 0.94619 | 0.94525 |
-| 12 | `12_strong_xgb_feature_views` | 两个更强的 XGBoost 特征视图 | 0.94618 | — | — |
-| 13 | `13_realmlp_10fold_v8_nested_hill` | RealMLP（pytabkit）十折 | — | — | — |
-| 14 | `14_1_realmlp_pytorch_kaggle_gpu` | RealMLP 风格 PyTorch，在 Kaggle GPU 上跑 | — | — | — |
-| 15 | `15` | RealMLP 风格 PyTorch，在 Mac MPS 上跑 | 0.93902 | — | — |
-| 16 | `16` | XGBoost + 窗口目标编码 | 0.94552 | — | — |
-| 17 | `17_final_ensemble` | **最终融合**：对已保存的预测做嵌套 hill climb，再加硬规则 | 0.94618 | **0.94622** | **0.94526** ✓ |
+| 01 | [`01_catboost_baseline`](notebooks/01_catboost_baseline.ipynb) | CatBoost 五折 baseline | 0.94170 | 0.94149 | 0.94091 |
+| 02 | [`02_digit_numeric_categories`](notebooks/02_digit_numeric_categories.ipynb) | 数字拆分 + 数值特征的类别副本 | — | 0.94555 | 0.94470 |
+| 03 | [`03_catboost_5fold`](notebooks/03_catboost_5fold.ipynb) | 用验证过的特征跑 CatBoost 五折 | 0.94562 | 0.94570 | 0.94486 |
+| 04 | [`04_add_lightgbm_blend`](notebooks/04_add_lightgbm_blend.ipynb) | 加入 LightGBM（嵌套目标编码），50/50 融合 | 0.94599 | 0.94618 | 0.94525 ✓ |
+| 05 | [`05_blend_weights_lgb_depth6`](notebooks/05_blend_weights_lgb_depth6.ipynb) | 25/75 融合；LightGBM 深度改为 6 | 0.94602 | 0.94615 | **0.94526** |
+| 06 | [`06_lightgbm_te_smoothing10`](notebooks/06_lightgbm_te_smoothing10.ipynb) | 目标编码平滑 1 → 10 | 0.94599 | 0.94609 | 0.94518 |
+| 07 | [`07_xgboost_three_model_blend`](notebooks/07_xgboost_three_model_blend.ipynb) | 加入 XGBoost，三模型融合 | 0.94604 | 0.94612 | 0.94524 |
+| 08 | [`08_conditional_residual_features`](notebooks/08_conditional_residual_features.ipynb) | 条件统计 + 残差特征 | 0.94600 | — | — |
+| 09 | [`09_xgboost_10fold_rank_blend`](notebooks/09_xgboost_10fold_rank_blend.ipynb) | 十折 XGBoost + rank 融合 | 0.94610 | — | — |
+| 10 | [`10_logreg_ensemble`](notebooks/10_logreg_ensemble.ipynb) | 十折逻辑回归，增加模型多样性 | 0.94264 ¹ | — | — |
+| 11 | [`11_probit_nested_hill_stack`](notebooks/11_probit_nested_hill_stack.ipynb) | Probit 归一化 + 嵌套 hill climb + OOF stacking | 0.94614 | 0.94619 | 0.94525 |
+| 12 | [`12_strong_xgb_feature_views`](notebooks/12_strong_xgb_feature_views.ipynb) | 两个更强的 XGBoost 特征视图 | 0.94618 | — | — |
+| 13 | [`13_realmlp_pytabkit`](notebooks/13_realmlp_pytabkit.ipynb) | RealMLP（pytabkit）十折 | — | — | — |
+| 14 | [`14_realmlp_pytorch_kaggle_gpu`](notebooks/14_realmlp_pytorch_kaggle_gpu.ipynb) | RealMLP 风格 PyTorch，在 Kaggle GPU 上跑 | — | — | — |
+| 15 | [`15_realmlp_pytorch_mps`](notebooks/15_realmlp_pytorch_mps.ipynb) | RealMLP 风格 PyTorch，在 Mac MPS 上跑 | 0.93902 | — | — |
+| 16 | [`16_xgboost_window_te`](notebooks/16_xgboost_window_te.ipynb) | XGBoost + 窗口目标编码 | 0.94552 | — | — |
+| 17 | [`17_final_ensemble`](notebooks/17_final_ensemble.ipynb) | **最终融合**：对已保存的预测做嵌套 hill climb，再加硬规则 | 0.94618 | **0.94622** | **0.94526** ✓ |
 
 ¹ 逻辑回归单模型的分数。所有加入它的融合方案都比 09 的融合分数低。
 
@@ -96,9 +96,10 @@ notebook 17 的最终权重：LightGBM 占 1/3；old XGBoost、`strong_rich_te`�
 
 ```
 .
-├── 01_…ipynb … 17_final_ensemble.ipynb   # 实验 notebook，按编号顺序运行
-├── data/          # 未上传：train.csv、test.csv
-└── outputs/       # 未上传：模型、OOF 和测试集预测（约 5.6 GB）
+├── notebooks/         # 01_catboost_baseline … 17_final_ensemble，按编号顺序运行
+├── requirements.txt
+├── data/              # 未上传：train.csv、test.csv
+└── outputs/           # 未上传：运行 notebook 时生成（模型、OOF 和测试集预测）
 ```
 
 ## 复现步骤
@@ -112,5 +113,5 @@ notebook 17 的最终权重：LightGBM 占 1/3；old XGBoost、`strong_rich_te`�
    ```bash
    pip install -r requirements.txt
    ```
-3. 每个 notebook 里都写死了 `PROJECT = Path("/Users/yw/unsw/Kaggle")`，改成你自己的路径。
+3. 启动 Jupyter，从 `notebooks/` 文件夹里打开 notebook。每个 notebook 都写的是 `PROJECT = Path.cwd().parent`，会自动到上一级目录找 `data/` 和 `outputs/`，不用改任何路径。只有 notebook 14 例外：它是在 Kaggle 上用 GPU 跑的，数据从 `/kaggle/input` 读取。
 4. 按编号顺序运行。从 04 开始，notebook 会读取 `outputs/` 里之前保存的预测结果，而不是重新训练，所以必须先跑前面的 notebook。
