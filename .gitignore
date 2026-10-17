@@ -1,0 +1,19 @@
+# Competition data (Kaggle rules forbid redistribution)
+data/
+
+# Training outputs: models, OOF predictions, submissions (~5.6G)
+outputs/
+external_oof/
+
+# CatBoost training logs
+catboost_info/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Python
+__pycache__/
+*.pyc
+
+# macOS
+.DS_Store
