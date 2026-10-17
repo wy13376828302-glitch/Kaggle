@@ -28,11 +28,11 @@ OOF = out-of-fold ROC AUC on the training set. Public LB = the score Kaggle repo
 | 03 | `03_0.94570`, `031_0.94570` | 5-fold CatBoost with the validated features | 0.94562 | 0.94570 |
 | 04 | `04_reuse_catboost_lightgbm` | Add LightGBM with nested target encoding, 50/50 blend | 0.94599 | 0.94618 |
 | 05 | `05_continue_04_lightgbm_blend` | 25/75 blend; LightGBM depth 6 | 0.94602 | 0.94615 |
-| 06 | `06_lightgbm_smoothing10` | Target-encoding smoothing 1 → 10 | — | 0.94609 |
-| 07 | `07_xgboost_three_model_blend` | Add XGBoost, three-model blend | — | — |
-| 08 | `08_conditional_residual_features` | Conditional statistics + residual features | — | — |
+| 06 | `06_lightgbm_smoothing10` | Target-encoding smoothing 1 → 10 | 0.94599 | 0.94609 |
+| 07 | `07_xgboost_three_model_blend` | Add XGBoost, three-model blend | 0.94604 | — |
+| 08 | `08_conditional_residual_features` | Conditional statistics + residual features | 0.94600 | — |
 | 09 | `09_heuljax_xgb10_rankblend` | 10-fold XGBoost + rank blend | 0.94610 | — |
-| 10 | `10_heuljax_logreg_ensemble` | 10-fold logistic regression for model diversity | — | — |
+| 10 | `10_heuljax_logreg_ensemble` | 10-fold logistic regression for model diversity | 0.94264 ¹ | — |
 | 11 | `11_probit_nested_stack_rules` | Probit normalization + nested hill climb + OOF stacking | 0.94614 | **0.94619** |
 | 12 | `12_strong_xgb_feature_views` | Two stronger XGBoost feature views | 0.94618 | — |
 | 13 | `13_realmlp_10fold_v8_nested_hill` | RealMLP (pytabkit) 10-fold | — | — |
@@ -40,6 +40,8 @@ OOF = out-of-fold ROC AUC on the training set. Public LB = the score Kaggle repo
 | 15 | `15` | RealMLP-style PyTorch on Apple MPS | 0.93902 | — |
 | 16 | `16` | XGBoost with window target encoding | 0.94552 | — |
 | 17 | `17_final_ensemble` | **Final ensemble** of saved predictions | 0.94617 | — |
+
+¹ Logistic regression alone. Every blend that included it scored lower than the blend from 09.
 
 ## Approach
 
@@ -70,6 +72,17 @@ flowchart LR
 
 Final blend weights in notebook 17: LightGBM 1/3; old XGBoost, `strong_rich_te`, `strong_rich_current_rank50` and `v8_views_equal_rank` 1/6 each.
 
+## Lessons learned
+
+1. **Feature representation gave the biggest gain.** Digit decomposition plus categorical copies of the numeric features moved the Public LB from 0.94149 to 0.94555 (+0.0041). All later work combined added about +0.0006.
+2. **A second model family helped once.** Adding LightGBM with nested target encoding to CatBoost took the Public LB from 0.94570 to 0.94618. After that, gains were tiny.
+3. **The tree models were too similar to blend well.** Spearman correlation between XGBoost and the CatBoost/LightGBM blend was 0.996, so adding more tree models raised OOF by about 0.0001 at most.
+4. **Small OOF gains did not carry over to the leaderboard.** The 25/75 blend in 05 improved OOF on all 5 folds (0.94599 → 0.94602), yet its Public LB went down (0.94618 → 0.94615). The same OOF was used for early stopping and for choosing candidates, so it is optimistic. Differences under about 0.0001 behaved like noise.
+5. **A different model family only helps if it is also strong.** Logistic regression (0.94264) and a RealMLP-style network (0.93902) were too weak. Every blend that included logistic regression scored 0.0004–0.0009 lower than the blend from 09.
+6. **Meta-ensembling gave a small, real gain.** Probit-normalized ranks with a nested hill climb raised OOF from 0.94610 to 0.94618 and produced the best Public LB (0.94619).
+7. **The ceiling was base-model strength, not ensembling.** My best single XGBoost reached 0.94600 OOF, while public write-ups for this competition reported 10-fold XGBoost at 0.9462–0.9465 CV. Closing that gap would have mattered more than further blending.
+8. **Fixed folds and saved predictions saved a lot of time.** Every model used the same 5-fold split (`StratifiedKFold`, seed 42) and saved its OOF and test predictions. Later notebooks loaded these instead of retraining, and checked that IDs and folds matched before blending.
+
 ## Repository layout
 
 ```
@@ -86,9 +99,9 @@ Final blend weights in notebook 17: LightGBM 1/3; old XGBoost, `strong_rich_te`,
    kaggle competitions download -c playground-series-s6e9 -p data
    unzip data/playground-series-s6e9.zip -d data
    ```
-2. Install the dependencies:
+2. Install the dependencies (Python 3.11; versions are pinned in [requirements.txt](requirements.txt)):
    ```bash
-   pip install numpy pandas scipy scikit-learn catboost lightgbm xgboost torch pytabkit
+   pip install -r requirements.txt
    ```
 3. Each notebook sets `PROJECT = Path("/Users/yw/unsw/Kaggle")`. Change it to your local path.
 4. Run the notebooks in numeric order. From 04 onward, each notebook loads saved predictions from earlier runs in `outputs/` instead of retraining, so the earlier notebooks have to be run first.
